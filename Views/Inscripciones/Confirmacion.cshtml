@@ -1,0 +1,46 @@
+@model Inscripcion
+@{
+    ViewData["Title"] = "Inscripción confirmada";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow border-success">
+                <div class="card-header bg-success text-white fw-bold">¡Inscripción exitosa!</div>
+                <div class="card-body">
+                    <p>
+                        Gracias, <strong>@Model.Nombre</strong>. Tu inscripción quedó registrada
+                        con el número <strong>#@Model.Id</strong>.
+                    </p>
+
+                    <ul class="list-group list-group-flush mb-4">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Clase</span><strong class="text-end">@Model.NombreClase</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Plan</span><strong>@Model.NombrePlan</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Edad</span><strong>@Model.Edad años</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Descuento</span><strong>@Model.Descuento.ToString("P0")</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Valor mensual</span><strong class="text-success">@Model.ValorMensual.ToString("C0")</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Fecha de registro</span><strong>@Model.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</strong>
+                        </li>
+                    </ul>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <a asp-action="Index" class="btn btn-dark">Ver inscritos</a>
+                        <a asp-action="Crear" class="btn btn-outline-dark">Nueva inscripción</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

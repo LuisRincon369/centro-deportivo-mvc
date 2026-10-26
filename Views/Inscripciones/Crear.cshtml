@@ -1,0 +1,70 @@
+@model Inscripcion
+@{
+    ViewData["Title"] = "Inscripción";
+    var opcionesClases = (List<SelectListItem>)ViewBag.Clases;
+    var planes = (List<Plan>)ViewBag.Planes;
+}
+
+<div class="container my-5">
+    <h1 class="text-center mb-2">Formulario de Inscripción</h1>
+    <p class="text-center text-muted mb-4">Regístrate a la clase de tu preferencia</p>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Al enviar, el navegador hace POST /Inscripciones/Crear con los datos del formulario.
+                 asp-for conecta cada campo con una propiedad del modelo Inscripcion. -->
+            <form asp-action="Crear" method="post" class="p-4 bg-light rounded shadow-sm">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="Nombre" class="form-label"></label>
+                        <input asp-for="Nombre" class="form-control" placeholder="Ej. Carlos Gómez" />
+                        <span asp-validation-for="Nombre" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Correo" class="form-label"></label>
+                        <input asp-for="Correo" class="form-control" placeholder="ejemplo@correo.com" />
+                        <span asp-validation-for="Correo" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Edad" class="form-label"></label>
+                        <input asp-for="Edad" class="form-control" placeholder="Ej. 26" />
+                        <span asp-validation-for="Edad" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-8">
+                        <label asp-for="ClaseId" class="form-label"></label>
+                        <select asp-for="ClaseId" asp-items="opcionesClases" class="form-select">
+                            <option value="">-- Selecciona una clase --</option>
+                        </select>
+                        <span asp-validation-for="ClaseId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label d-block">Plan</label>
+                        <div class="row g-2">
+                            @foreach (var plan in planes)
+                            {
+                                <div class="col-md-4">
+                                    <label class="plan-opcion card h-100 p-3" for="plan-@plan.Id">
+                                        <span>
+                                            <input asp-for="PlanId" type="radio" value="@plan.Id" id="plan-@plan.Id" class="form-check-input me-1" />
+                                            <span class="fw-semibold">@plan.Nombre</span>
+                                        </span>
+                                        <span class="text-muted small">@plan.Precio.ToString("C0") / mes</span>
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                        <span asp-validation-for="PlanId" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-warning fw-bold mt-4 w-100">Confirmar inscripción</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Validación en el navegador generada a partir de las reglas del modelo -->
+    <partial name="_ValidationScriptsPartial" />
+}
