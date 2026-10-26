@@ -1,47 +1,70 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@{
+    // Controlador y acción de la petición actual: sirven para resaltar el enlace activo del menú
+    var controlador = ViewContext.RouteData.Values["controller"]?.ToString();
+    var accion = ViewContext.RouteData.Values["action"]?.ToString();
+}
+<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - CentroDeportivo</title>
+    <meta name="description" content="Centro de Entrenamiento Deportivo - Planes, horario de clases e inscripciones con ASP.NET Core MVC." />
+    <title>@ViewData["Title"] | Rincón Sport</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/CentroDeportivo.styles.css" asp-append-version="true" />
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- ============================================================
+         NAVBAR (componente Bootstrap) - compartido por todas las vistas
+         ============================================================ -->
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">CentroDeportivo</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
+                    <span class="text-warning">CD</span> Rincón Sport
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+                        aria-controls="navMenu" aria-expanded="false" aria-label="Alternar navegación">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse" id="navMenu">
+                    <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link @(controlador == "Home" ? "active" : "")" asp-controller="Home" asp-action="Index">Inicio</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link @(controlador == "Clases" ? "active" : "")" asp-controller="Clases" asp-action="Index">Clases</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(controlador == "Inscripciones" && accion != "Index" ? "active" : "")" asp-controller="Inscripciones" asp-action="Crear">Inscribirme</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(controlador == "Inscripciones" && accion == "Index" ? "active" : "")" asp-controller="Inscripciones" asp-action="Index">Inscritos</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - CentroDeportivo - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <!-- Aquí se inserta el contenido de cada vista (.cshtml) -->
+    <main class="flex-grow-1">
+        @RenderBody()
+    </main>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer class="bg-dark text-white-50 py-4">
+        <div class="container text-center">
+            <p class="mb-1"><strong class="text-white">Centro de Entrenamiento Deportivo</strong></p>
+            <p class="mb-1">Av. Deportiva Central # 45 - 80 · (601) 765-4321</p>
+            <p class="mb-0">&copy; 2026 Rincón Sport · Luis Esteban Rincón Espinosa</p>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
