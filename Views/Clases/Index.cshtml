@@ -1,0 +1,66 @@
+@model List<Clase>
+@{
+    ViewData["Title"] = "Horario de clases";
+    var dias = (List<string>)ViewBag.Dias;
+    var diaSeleccionado = ViewBag.DiaSeleccionado as string;
+}
+
+<div class="container my-5">
+    <h1 class="text-center mb-2">Horario de Clases</h1>
+    <p class="text-center text-muted mb-4">Filtra las clases disponibles por día</p>
+
+    <!-- Cada botón es un enlace GET: /Clases?dia=Lunes, /Clases?dia=Martes, ... -->
+    <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+        <a asp-action="Index" class="btn btn-outline-dark btn-sm filtro-btn @(string.IsNullOrEmpty(diaSeleccionado) ? "active" : "")">Todos</a>
+        @foreach (var dia in dias)
+        {
+            <a asp-action="Index" asp-route-dia="@dia" class="btn btn-outline-dark btn-sm filtro-btn @(dia == diaSeleccionado ? "active" : "")">@dia</a>
+        }
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Día</th>
+                    <th>Hora</th>
+                    <th>Clase</th>
+                    <th>Entrenador</th>
+                    <th class="text-center">Cupos</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count == 0)
+                {
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">No hay clases ese día</td>
+                    </tr>
+                }
+                @foreach (var clase in Model)
+                {
+                    <tr>
+                        <td>@clase.Dia</td>
+                        <td>@clase.Hora</td>
+                        <td class="fw-semibold">@clase.Nombre</td>
+                        <td>@clase.Entrenador</td>
+                        <td class="text-center">
+                            <span class="badge @(clase.Cupos > 0 ? "bg-success" : "bg-danger")">@clase.Cupos</span>
+                        </td>
+                        <td class="text-end">
+                            @if (clase.Cupos > 0)
+                            {
+                                <a asp-controller="Inscripciones" asp-action="Crear" asp-route-claseId="@clase.Id"
+                                   class="btn btn-warning btn-sm fw-semibold">Inscribirme</a>
+                            }
+                            else
+                            {
+                                <span class="badge text-bg-secondary">Sin cupos</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
