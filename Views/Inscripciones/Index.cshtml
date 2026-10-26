@@ -1,0 +1,118 @@
+@model List<Inscripcion>
+@{
+    ViewData["Title"] = "Inscritos";
+    var totalMensual = (decimal)ViewBag.TotalMensual;
+}
+
+<div class="container my-5">
+    <h1 class="text-center mb-4">
+        Inscritos <span class="badge bg-secondary">@Model.Count</span>
+    </h1>
+
+    @if (TempData["Mensaje"] is string mensaje)
+    {
+        <!-- Alerta (componente Bootstrap) con el resultado de la última eliminación -->
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @mensaje
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+    }
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <div class="card text-center shadow-sm h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Total de inscripciones</p>
+                    <p class="display-6 fw-bold mb-0">@Model.Count</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card text-center shadow-sm h-100 border-warning">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Ingreso mensual estimado</p>
+                    <p class="display-6 fw-bold mb-0">@totalMensual.ToString("C0")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle tabla-inscritos">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Edad</th>
+                    <th>Clase</th>
+                    <th>Plan</th>
+                    <th>Valor mensual</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count == 0)
+                {
+                    <tr>
+                        <td colspan="8" class="text-center text-muted">
+                            Aún no hay inscritos. <a asp-action="Crear">Registra el primero</a>
+                        </td>
+                    </tr>
+                }
+                @foreach (var inscripcion in Model)
+                {
+                    <tr>
+                        <td>@inscripcion.Id</td>
+                        <td>@inscripcion.Nombre</td>
+                        <td>@inscripcion.Correo</td>
+                        <td>@inscripcion.Edad</td>
+                        <td>@inscripcion.NombreClase</td>
+                        <td>@inscripcion.NombrePlan</td>
+                        <td>
+                            @inscripcion.ValorMensual.ToString("C0")
+                            @if (inscripcion.Descuento > 0)
+                            {
+                                <span class="badge bg-info text-dark">-@inscripcion.Descuento.ToString("P0")</span>
+                            }
+                        </td>
+                        <td>
+                            <!-- Abre el modal; data-id y data-nombre los lee site.js -->
+                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                    data-bs-toggle="modal" data-bs-target="#modalEliminar"
+                                    data-id="@inscripcion.Id" data-nombre="@inscripcion.Nombre">
+                                Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ============================================================
+     MODAL (componente Bootstrap) - confirma antes de eliminar.
+     El formulario hace POST /Inscripciones/Eliminar con el id.
+     ============================================================ -->
+<div class="modal fade" id="modalEliminar" tabindex="-1" aria-labelledby="modalEliminarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="Eliminar" method="post">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title fw-bold" id="modalEliminarLabel">Eliminar inscripción</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Seguro que deseas eliminar la inscripción de <strong id="nombreEliminar"></strong>?
+                    El cupo volverá a quedar disponible.
+                    <input type="hidden" name="id" id="idEliminar" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

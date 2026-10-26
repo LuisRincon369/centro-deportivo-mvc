@@ -7,6 +7,14 @@ namespace CentroDeportivo.Controllers;
 
 public class InscripcionesController : Controller
 {
+    // GET: /Inscripciones
+    // Lista de inscritos y el ingreso mensual total, calculado en C# con LINQ.
+    public IActionResult Index()
+    {
+        ViewBag.TotalMensual = DatosGimnasio.Inscripciones.Sum(i => i.ValorMensual);
+        return View(DatosGimnasio.Inscripciones);
+    }
+
     // GET: /Inscripciones/Crear  (o /Inscripciones/Crear?claseId=3 desde el horario)
     // Solo MUESTRA el formulario vacío; si viene una clase, la deja preseleccionada.
     [HttpGet]
@@ -83,6 +91,30 @@ public class InscripcionesController : Controller
         }
 
         return View(inscripcion);
+    }
+
+    // POST: /Inscripciones/Eliminar  (lo envía el formulario del modal de confirmación)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Eliminar(int id)
+    {
+        var inscripcion = DatosGimnasio.Inscripciones.FirstOrDefault(i => i.Id == id);
+        if (inscripcion == null)
+        {
+            return NotFound();
+        }
+
+        // Al eliminar la inscripción, el cupo vuelve a quedar disponible en la clase
+        var clase = DatosGimnasio.Clases.FirstOrDefault(c => c.Id == inscripcion.ClaseId);
+        if (clase != null)
+        {
+            clase.Cupos++;
+        }
+
+        DatosGimnasio.Inscripciones.Remove(inscripcion);
+        TempData["Mensaje"] = $"Se eliminó la inscripción de {inscripcion.Nombre}.";
+
+        return RedirectToAction(nameof(Index));
     }
 
     // Menores de 18 y mayores de 60 años tienen 15% de descuento
